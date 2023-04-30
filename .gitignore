@@ -2,6 +2,7 @@
 .vscode/
 
 app/.env
+app/firebase/
 
 database/.env
 database/postgres-data/

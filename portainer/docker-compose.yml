@@ -12,14 +12,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer-data:/data
     networks:
-      - app
-      - db
-      - monitoring
+      - infra
 
 networks:
-  app:
-    external: true
-  db:
-    external: true
-  monitoring:
+  infra:
     external: true

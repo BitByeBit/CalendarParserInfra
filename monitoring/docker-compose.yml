@@ -10,7 +10,7 @@ services:
     ports:
       - 9090:9090
     networks:
-      - monitoring
+      - infra
 
   node_exporter:
     container_name: node_exporter
@@ -30,7 +30,8 @@ services:
     ports:
       - 9100:9100
     networks:
-      - monitoring     
+      - infra     
 
 networks:
-  monitoring:
+  infra:
+    external: true

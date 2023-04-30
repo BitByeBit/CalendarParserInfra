@@ -18,7 +18,10 @@ services:
       AUTHENTICATOR_URL: ${AUTHENTICATOR_URL}
     networks:
       - app
-      - db
+      - infra
+    depends_on:
+      - parser
+      - authenticator
     
   parser:
     container_name: parser
@@ -36,12 +39,16 @@ services:
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
     ports:
-      - 9090:9090
+      - 9990:9090
+    volumes:
+      - ./firebase/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:/srv/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:ro
+    environment:
+      FIREBASE_CREDENTIAL_PATH: ${FIREBASE_CREDENTIAL_PATH}
     networks:
       - app
 
 networks:
   app:
-  db:
+  infra:
     external: true
     
