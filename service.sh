@@ -52,7 +52,7 @@ stop() {
     info "Stopping service..."
 
     docker-compose -f gateway/docker-compose.yml down || warn "Failed to stop gateway"
-    docker-compose -f monitor/docker-compose.yml down || warn "Failed to stop monitoring"
+    docker-compose -f monitoring/docker-compose.yml down || warn "Failed to stop monitoring"
     docker-compose -f app/docker-compose.yml down || warn "Failed to stop app"
     docker-compose -f database/docker-compose.yml down || warn "Failed to stop database"
 
