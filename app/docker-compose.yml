@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  core:
+    container_name: core
+    image: core-be
+    restart: unless-stopped
+    command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
+    ports:
+      - 8081:8081
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      PARSER_URL: ${PARSER_URL}
+      AUTHENTICATOR_URL: ${AUTHENTICATOR_URL}
+    networks:
+      - app
+      - infra
+    depends_on:
+      - parser
+      - authenticator
+    
+  parser:
+    container_name: parser
+    image: parser
+    restart: unless-stopped
+    command: ["java", "-jar", "/srv/calendar-parser-parser.jar"]
+    ports:
+      - 9999:9999
+    networks:
+      - app
+
+  authenticator:
+    container_name: authenticator
+    image: authenticator
+    restart: unless-stopped
+    command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
+    ports:
+      - 9990:9090
+    volumes:
+      - ./firebase/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:/srv/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:ro
+    environment:
+      FIREBASE_CREDENTIAL_PATH: ${FIREBASE_CREDENTIAL_PATH}
+    networks:
+      - app
+
+networks:
+  app:
+  infra:
+    external: true
+    

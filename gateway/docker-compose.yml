@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  gateway:
+    container_name: gateway
+    image: kong
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./kong.yml:/opt/kong.yml
+    environment:
+      KONG_DATABASE: "off"
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_PROXY_HTTP_PORT_NUMBER: 80
+      KOND_DECLARATIVE_CONFIG: /opt/kong.yml
+      KONG_PROXY_LISTEN: "0.0.0.0:80"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+    networks:
+      - infra
+
+networks:
+  infra:
+    external: true

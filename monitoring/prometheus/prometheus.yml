@@ -28,3 +28,7 @@ scrape_configs:
         - filefd
         - filesystem
         - xfs
+
+  - job_name: 'calendar'
+    static_configs:
+      - targets: ['localhost:8081']
