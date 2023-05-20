@@ -10,7 +10,7 @@ services:
     ports:
       - 9090:9090
     networks:
-      - infra
+      - propetheus
 
   node_exporter:
     container_name: node_exporter
@@ -30,8 +30,7 @@ services:
     ports:
       - 9100:9100
     networks:
-      - infra     
+      - propetheus     
 
 networks:
-  infra:
-    external: true
+  propetheus:

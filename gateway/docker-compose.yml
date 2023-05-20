@@ -20,8 +20,7 @@ services:
       KONG_PROXY_LISTEN: "0.0.0.0:80"
       KONG_ADMIN_LISTEN: "0.0.0.0:8001"
     networks:
-      - infra
+      - gateway
 
 networks:
-  infra:
-    external: true
+  gateway:

@@ -18,7 +18,9 @@ services:
       AUTHENTICATOR_URL: ${AUTHENTICATOR_URL}
     networks:
       - app
-      - infra
+      - db
+      - gateway
+      - prometheus
     depends_on:
       - parser
       - authenticator
@@ -49,6 +51,10 @@ services:
 
 networks:
   app:
-  infra:
+  gateway:
+    external: true
+  prometheus:
+    external: true
+  db:
     external: true
     
