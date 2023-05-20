@@ -11,24 +11,72 @@ warn() { echo "${YELLOW}WARNING    => $1 ${NORMAL}"; }
 success() { echo "${GREEN}SUCCESS    => $1 ${NORMAL}"; }
 info() { echo "${BLUE}INFO    => $1 ${NORMAL}"; }
 
+SERVICE_NAME="calendar_parser"
+
 source_env() {
     set -a
     source app/.env || error "Failed to load app .env file"
     source database/.env || error "Failed to load database .env file"
     source gateway/.env || error "Failed to load gateway .env file"
     source monitoring/.env || error "Failed to load monitoring .env file"
+    source portainer/.env || error "Failed to load portainer .env file"
     set +a
+}
+
+create_networks() {
+    if [[ $1 == true ]]; then
+        info "Creating app network..."
+        docker network create --driver=overlay --attachable app || warn "Could not create network or app network already exists"
+        success "Created app network"
+
+        info "Creating database network..."
+        docker network create --driver=overlay --attachable database || warn "Could not create network or database network already exists"
+        success "Created database network"
+
+        info "Creating monitoring network..."
+        docker network create --driver=overlay --attachable monitoring || warn "Could not create network or monitoring network already exists"
+        success "Created monitoring network"
+
+        info "Creating portainer network..."
+        docker network create --driver=overlay --attachable portainer || warn "Could not create network or portainer network already exists"
+        success "Created portainer network"
+
+        info "Creating gateway_bridge network..."
+        docker network create --driver=overlay --attachable gateway_bridge || warn "Could not create network or gateway_bridge network already exists"
+        success "Created gateway_bridge network"
+    else
+        info "Creating app network..."
+        docker network create --driver=bridge app || warn "Could not create network or app network already exists"
+        success "Created app network"
+
+        info "Creating database network..."
+        docker network create --driver=bridge database || warn "Could not create network or database network already exists"
+        success "Created database network"
+
+        info "Creating monitoring network..."
+        docker network create --driver=bridge monitoring || warn "Could not create network or monitoring network already exists"
+        success "Created monitoring network"
+
+        info "Creating portainer network..."
+        docker network create --driver=bridge portainer || warn "Could not create network or portainer network already exists"
+        success "Created portainer network"
+
+        info "Creating gateway_bridge network..."
+        docker network create --driver=bridge gateway_bridge || warn "Could not create network or gateway_bridge network already exists"
+        success "Created gateway_bridge network"
+    fi
 }
 
 start() {
     info "Starting service..."
 
+    info "Loading environment variables..."
     source_env
     success "Loaded environment variables"
 
-    info "Creating infra network..."
-    docker network create --driver=bridge infra || warn "Infra network already exists"
-    success "Created infra network"
+    info "Creating networks..."
+    create_networks
+    success "Created networks"
 
     info "Starting portainer..."
     docker-compose -f portainer/docker-compose.yml up -d || error "Failed to start portainer"
@@ -46,6 +94,35 @@ start() {
     docker-compose -f gateway/docker-compose.yml up -d || error "Failed to start gateway"
 
     success "Service started successfully"
+}
+
+deploy() {
+   info "Deploying service to cluster $SERVICE_NAME..."
+
+    info "Loading environment variables..."
+    source_env
+    success "Loaded environment variables"
+
+    info "Creating networks..."
+    create_networks true
+    success "Created networks"
+
+    info "Deploying portainer..."
+    docker stack deploy -c portainer/docker-compose.yml $SERVICE_NAME || error "Failed to deploy portainer"
+
+    info "Deploying database..."
+    docker stack deploy -c database/docker-compose.yml $SERVICE_NAME || error "Failed to deploy database"
+
+    info "Deploying app..."
+    docker stack deploy -c app/docker-compose.yml $SERVICE_NAME || error "Failed to deploy app"
+
+    info "Deploying monitoring..."
+    docker stack deploy -c monitoring/docker-compose.yml $SERVICE_NAME || error "Failed to deploy monitoring"
+
+    info "Deploying gateway..."
+    docker stack deploy -c gateway/docker-compose.yml $SERVICE_NAME || error "Failed to deploy gateway"
+
+    success "Service deployed successfully" 
 }
 
 stop() {
@@ -74,6 +151,7 @@ fi
 
 case $COMMAND in
     start) start;;
+    deploy) deploy;;
     stop) stop;;
     restart) restart;;
     *)

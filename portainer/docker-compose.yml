@@ -1,19 +1,37 @@
 version: '3'
 
 services:
+  agent:
+    image: portainer/agent:${PORTAINER_AGENT_VERSION:-latest}
+    container_name: agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - portainer
+
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:${PORTAINER_CE_VERSION:-latest}
+    command: -H tcp://agent:9001 --tlsskipverify
     container_name: portainer
     restart: always
     ports:
       - 8000:8000
       - 9443:9443
+      - 9000:9000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer-data:/data
     networks:
-      - infra
+      - portainer
+      - gateway_bridge
 
 networks:
-  infra:
+  portainer:
+    # driver: overlay
+    # attachable: true
     external: true
+  gateway_bridge:
+    # driver: overlay
+    # attachable: true
+    external: true 

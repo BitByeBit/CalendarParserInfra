@@ -3,7 +3,7 @@ version: '3'
 services:
   core:
     container_name: core
-    image: core-be
+    image: ghcr.io/bitbyebit/calendar-parser-core-be:${CORE_BE_VERSION:-latest}
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
     ports:
@@ -18,16 +18,14 @@ services:
       AUTHENTICATOR_URL: ${AUTHENTICATOR_URL}
     networks:
       - app
-      - db
-      - gateway
-      - prometheus
+      - gateway_bridge
     depends_on:
       - parser
       - authenticator
     
   parser:
     container_name: parser
-    image: parser
+    image: ghcr.io/bitbyebit/calendar-parser-parser:${PARSER_VERSION:-latest}
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-parser.jar"]
     ports:
@@ -37,7 +35,7 @@ services:
 
   authenticator:
     container_name: authenticator
-    image: authenticator
+    image: ghcr.io/bitbyebit/calendar-parser-authenticator:${AUTHENTICATOR_VERSION:-latest}
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
     ports:
@@ -51,10 +49,11 @@ services:
 
 networks:
   app:
-  gateway:
+    # driver: overlay
+    # attachable: true
     external: true
-  prometheus:
-    external: true
-  db:
+  gateway_bridge:
+    # driver: overlay
+    # attachable: true
     external: true
     

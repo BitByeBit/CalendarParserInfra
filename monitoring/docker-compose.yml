@@ -10,7 +10,9 @@ services:
     ports:
       - 9090:9090
     networks:
-      - propetheus
+      - app
+      - monitoring
+      - gateway_bridge
 
   node_exporter:
     container_name: node_exporter
@@ -30,7 +32,18 @@ services:
     ports:
       - 9100:9100
     networks:
-      - propetheus     
+      - monitoring    
 
 networks:
-  propetheus:
+  app:
+    # driver: overlay
+    # attachable: true
+    external: true
+  monitoring:
+    # driver: overlay
+    # attachable: true
+    external: true
+  gateway_bridge:
+    # driver: overlay
+    # attachable: true
+    external: true

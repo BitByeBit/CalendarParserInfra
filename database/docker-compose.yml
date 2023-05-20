@@ -14,7 +14,8 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_DB: ${POSTGRES_DB}
     networks:
-      - db
+      - database
+      - app
 
   pgadmin:
     container_name: pgadmin
@@ -30,8 +31,20 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
     networks:
-      - db
+      - database
+      - gateway_bridge
 
 networks:
-  db:
+  app:
+    # driver: overlay
+    # attachable: true
+    external: true
+  database:
+    # driver: overlay
+    # attachable: true
+    external: true
+  gateway_bridge:
+    # driver: overlay
+    # attachable: true
+    external: true
 
