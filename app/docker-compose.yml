@@ -6,10 +6,6 @@ services:
     image: ghcr.io/bitbyebit/calendar-parser-core-be:${CORE_BE_VERSION:-latest}
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: "0.2"
-          memory: 50M
       restart_policy:
         condition: on-failure
     restart: unless-stopped
@@ -34,10 +30,6 @@ services:
     image: ghcr.io/bitbyebit/calendar-parser-parser:${PARSER_VERSION:-latest}
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: "0.2"
-          memory: 50M
       restart_policy:
         condition: on-failure
     restart: unless-stopped
@@ -50,10 +42,6 @@ services:
     image: ghcr.io/bitbyebit/calendar-parser-authenticator:${AUTHENTICATOR_VERSION:-latest}
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: "0.2"
-          memory: 50M
       restart_policy:
         condition: on-failure
     restart: unless-stopped
