@@ -12,9 +12,11 @@ services:
           memory: 50M
       restart_policy:
         condition: on-failure
+      placement:
+        constraints: [node.role == manager]
     restart: unless-stopped
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     environment:
         POSTGRES_USER: ${POSTGRES_USER}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -38,13 +40,17 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./pgadmin-data:/var/lib/pgadmin
+      - pgadmin-data:/var/lib/pgadmin
     environment:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
     networks:
       - database
       - gateway_bridge
+
+volumes:
+  postgres-data:
+  pgadmin-data:
 
 networks:
   app:

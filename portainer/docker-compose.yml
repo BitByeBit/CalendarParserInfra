@@ -30,10 +30,13 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer-data:/data
+      - portainer-data:/data
     networks:
       - portainer
       - gateway_bridge
+
+volumes:
+  portainer_data:
 
 networks:
   portainer:

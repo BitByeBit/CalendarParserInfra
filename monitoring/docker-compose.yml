@@ -13,8 +13,9 @@ services:
       restart_policy:
         condition: on-failure
     restart: unless-stopped
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    configs:
+      - source: prometheus-config
+        target: /etc/prometheus/prometheus.yml
     networks:
       - app
       - monitoring
@@ -36,7 +37,11 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     networks:
-      - monitoring    
+      - monitoring
+
+configs:
+  prometheus-config:
+    file: ./prometheus/prometheus.yml   
 
 networks:
   app:

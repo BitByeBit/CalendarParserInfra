@@ -58,12 +58,17 @@ services:
         condition: on-failure
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
-    volumes:
-      - ./firebase/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:/srv/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:ro
+    secrets:
+      - source: firebase-credential
+        target: /srv/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json
     environment:
       FIREBASE_CREDENTIAL_PATH: ${FIREBASE_CREDENTIAL_PATH}
     networks:
       - app
+
+secrets:
+  firebase-credential:
+    file: ./firebase/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json
 
 networks:
   app:

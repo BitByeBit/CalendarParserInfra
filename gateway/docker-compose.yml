@@ -16,8 +16,9 @@ services:
     ports:
       - 80:8000
       - 443:8443
-    volumes:
-      - ./kong:/kong/declarative:ro
+    configs:
+      - source: kong-config
+        target: /kong/declarative/kong.yml
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
@@ -28,6 +29,10 @@ services:
       KONG_ADMIN_LISTEN: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
     networks:
       - gateway_bridge
+
+configs:
+  kong-config:
+    file: ./kong.yml
 
 networks:
   gateway_bridge:
