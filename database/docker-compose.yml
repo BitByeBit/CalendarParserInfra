@@ -34,37 +34,6 @@ services:
       - database
       - gateway_bridge
 
-  loki:
-    image: grafana/loki
-    volumes:
-        - ../configs/loki/loki.yml:/etc/config/loki.yml
-        - ../configs/loki/wal:/wal
-    entrypoint:
-        - /usr/bin/loki
-        - -config.file=/etc/config/loki.yml
-    ports:
-        - 3100:3100
-    networks:
-        - database
-        - app
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - loki
-    ports:
-      - 81:3000
-    networks:
-      - database
-      - app
-    volumes:
-      - grafana-volume:/var/lib/grafana
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
-      - ./grafana:/etc/grafana/provisioning
-
 networks:
   app:
     # driver: overlay
@@ -78,7 +47,4 @@ networks:
     # driver: overlay
     # attachable: true
     external: true
-
-volumes:
-  grafana-volume:
 
