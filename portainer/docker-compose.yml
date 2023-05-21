@@ -36,7 +36,7 @@ services:
       - gateway_bridge
 
 volumes:
-  portainer_data:
+  portainer-data:
 
 networks:
   portainer:
