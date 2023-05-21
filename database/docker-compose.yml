@@ -49,14 +49,11 @@ services:
 networks:
   app:
     driver: overlay
-    attachable: true
     external: true
   database:
     driver: overlay
-    attachable: true
     external: true
   gateway_bridge:
     driver: overlay
-    attachable: true
     external: true
 

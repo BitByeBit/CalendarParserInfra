@@ -38,9 +38,7 @@ services:
 networks:
   portainer:
     driver: overlay
-    attachable: true
     external: true
   gateway_bridge:
     driver: overlay
-    attachable: true
     external: true 

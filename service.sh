@@ -26,23 +26,23 @@ source_env() {
 create_networks() {
     if [[ $1 == true ]]; then
         info "Creating app network..."
-        docker network create --driver=overlay --attachable app || warn "Could not create network or app network already exists"
+        docker network create --driver=overlay app || warn "Could not create network or app network already exists"
         success "Created app network"
 
         info "Creating database network..."
-        docker network create --driver=overlay --attachable database || warn "Could not create network or database network already exists"
+        docker network create --driver=overlay database || warn "Could not create network or database network already exists"
         success "Created database network"
 
         info "Creating monitoring network..."
-        docker network create --driver=overlay --attachable monitoring || warn "Could not create network or monitoring network already exists"
+        docker network create --driver=overlay monitoring || warn "Could not create network or monitoring network already exists"
         success "Created monitoring network"
 
         info "Creating portainer network..."
-        docker network create --driver=overlay --attachable portainer || warn "Could not create network or portainer network already exists"
+        docker network create --driver=overlay portainer || warn "Could not create network or portainer network already exists"
         success "Created portainer network"
 
         info "Creating gateway_bridge network..."
-        docker network create --driver=overlay --attachable gateway_bridge || warn "Could not create network or gateway_bridge network already exists"
+        docker network create --driver=overlay gateway_bridge || warn "Could not create network or gateway_bridge network already exists"
         success "Created gateway_bridge network"
     else
         info "Creating app network..."

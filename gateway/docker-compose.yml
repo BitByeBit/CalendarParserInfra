@@ -32,5 +32,4 @@ services:
 networks:
   gateway_bridge:
     driver: overlay
-    attachable: true
     external: true 
