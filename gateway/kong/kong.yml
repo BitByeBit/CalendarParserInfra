@@ -1,0 +1,39 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+- name: calendar-parser
+  url: http://core:8081
+  routes:
+  - name: api
+    paths:
+    - /api
+    methods:
+    - GET
+    - POST
+    - DELETE
+    strip_path: true
+
+- name: portainer
+  url: http://portainer:9000
+  routes:
+  - name: portainer
+    paths:
+    - /portainer
+    strip_path: true
+
+- name: prometheus
+  url: http://prometheus:9090
+  routes:
+  - name: prometheus
+    paths:
+    - /prometheus
+    strip_path: true
+
+- name: pgadmin
+  url: http://pgadmin:5050
+  routes:
+  - name: pgadmin
+    paths:
+    - /pgadmin
+    strip_path: true
