@@ -6,8 +6,6 @@ services:
     image: ghcr.io/bitbyebit/calendar-parser-core-be:${CORE_BE_VERSION:-latest}
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
-    ports:
-      - 8081:8081
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
@@ -28,8 +26,6 @@ services:
     image: ghcr.io/bitbyebit/calendar-parser-parser:${PARSER_VERSION:-latest}
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-parser.jar"]
-    ports:
-      - 9999:9999
     networks:
       - app
 
@@ -38,8 +34,6 @@ services:
     image: ghcr.io/bitbyebit/calendar-parser-authenticator:${AUTHENTICATOR_VERSION:-latest}
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
-    ports:
-      - 9990:9090
     volumes:
       - ./firebase/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:/srv/calendar-parser-e0e69-firebase-adminsdk-r7i9e-68f54358ea.json:ro
     environment:

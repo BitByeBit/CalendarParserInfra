@@ -15,10 +15,6 @@ services:
     command: -H tcp://agent:9001 --tlsskipverify
     container_name: portainer
     restart: always
-    ports:
-      - 8000:8000
-      - 9443:9443
-      - 9000:9000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer-data:/data

@@ -132,6 +132,7 @@ stop() {
     docker-compose -f monitoring/docker-compose.yml down || warn "Failed to stop monitoring"
     docker-compose -f app/docker-compose.yml down || warn "Failed to stop app"
     docker-compose -f database/docker-compose.yml down || warn "Failed to stop database"
+    docker-compose -f portainer/docker-compose.yml down || warn "Failed to stop portainer"
 
     success "Service stopped successfully"
 }

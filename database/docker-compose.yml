@@ -5,8 +5,6 @@ services:
     container_name: postgres
     image: postgres
     restart: unless-stopped
-    ports:
-      - 5432:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     environment:
@@ -23,8 +21,6 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
-    ports:
-      - 5050:80
     volumes:
       - ./pgadmin-data:/var/lib/pgadmin
     environment:
