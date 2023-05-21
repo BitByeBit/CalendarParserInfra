@@ -125,6 +125,18 @@ deploy() {
     success "Service deployed successfully" 
 }
 
+remove_networks() {
+    info "Removing networks..."
+
+    docker network rm gateway_bridge || warn "Failed to remove gateway_bridge network"
+    docker network rm monitoring || warn "Failed to remove monitoring network"
+    docker network rm app || warn "Failed to remove app network"
+    docker network rm database || warn "Failed to remove database network"
+    docker network rm portainer || warn "Failed to remove portainer network"
+
+    success "Removed networks"
+}
+
 stop() {
     info "Stopping service..."
 
@@ -135,6 +147,18 @@ stop() {
     docker-compose -f portainer/docker-compose.yml down || warn "Failed to stop portainer"
 
     success "Service stopped successfully"
+
+    remove_networks
+}
+
+deploy-stop(){
+    info "Stopping service..."
+
+    docker stack rm $SERVICE_NAME || warn "Failed to stop service"
+
+    success "Service stopped successfully"
+
+    remove_networks
 }
 
 restart() {
@@ -154,6 +178,7 @@ case $COMMAND in
     start) start;;
     deploy) deploy;;
     stop) stop;;
+    deploy-stop) deploy-stop;;
     restart) restart;;
     *)
         echo "Unknown command: $COMMAND"

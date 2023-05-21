@@ -4,6 +4,14 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
     restart: unless-stopped
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -32,14 +40,14 @@ services:
 
 networks:
   app:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
+    attachable: true
     external: true
   monitoring:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
+    attachable: true
     external: true
   gateway_bridge:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
+    attachable: true
     external: true

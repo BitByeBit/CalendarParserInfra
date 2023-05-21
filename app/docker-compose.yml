@@ -4,6 +4,14 @@ services:
   core:
     container_name: core
     image: ghcr.io/bitbyebit/calendar-parser-core-be:${CORE_BE_VERSION:-latest}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
     environment:
@@ -24,6 +32,14 @@ services:
   parser:
     container_name: parser
     image: ghcr.io/bitbyebit/calendar-parser-parser:${PARSER_VERSION:-latest}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-parser.jar"]
     networks:
@@ -32,6 +48,14 @@ services:
   authenticator:
     container_name: authenticator
     image: ghcr.io/bitbyebit/calendar-parser-authenticator:${AUTHENTICATOR_VERSION:-latest}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
     restart: unless-stopped
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
     volumes:
@@ -43,11 +67,11 @@ services:
 
 networks:
   app:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
+    attachable: true
     external: true
   gateway_bridge:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
+    attachable: true
     external: true
     
