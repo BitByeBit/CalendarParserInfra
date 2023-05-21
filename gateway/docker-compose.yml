@@ -32,7 +32,7 @@ services:
 
 configs:
   kong-config:
-    file: ./kong.yml
+    file: ./kong/kong.yml
 
 networks:
   gateway_bridge:
