@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   agent:
-    container_name: agent
     image: portainer/agent:${PORTAINER_AGENT_VERSION:-latest}
     deploy:
       mode: global
@@ -17,7 +16,6 @@ services:
       - portainer
 
   portainer:
-    container_name: portainer
     image: portainer/portainer-ce:${PORTAINER_CE_VERSION:-latest}
     command: -H tcp://agent:9001 --tlsskipverify
     deploy:
@@ -27,7 +25,8 @@ services:
         constraints: [node.role == manager]
       restart_policy:
         condition: on-failure
-    restart: always
+    labels:
+      - com.docker.compose.service.portainer.path=/portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-data:/data

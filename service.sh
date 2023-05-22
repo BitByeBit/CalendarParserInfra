@@ -97,7 +97,7 @@ start() {
 }
 
 deploy() {
-   info "Deploying service to cluster $SERVICE_NAME..."
+    info "Deploying service to cluster $SERVICE_NAME..."
 
     info "Loading environment variables..."
     source_env

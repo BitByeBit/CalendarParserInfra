@@ -31,7 +31,7 @@ services:
     strip_path: true
 
 - name: pgadmin
-  url: http://pgadmin:5050
+  url: http://pgadmin:80
   routes:
   - name: pgadmin
     paths:
