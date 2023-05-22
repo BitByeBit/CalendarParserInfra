@@ -9,6 +9,11 @@ services:
       restart_policy:
         condition: on-failure
     restart: unless-stopped
+    logging:
+            driver: loki
+            options:
+                loki-url: http://host.docker.internal:3100/loki/api/v1/push
+                loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
     environment:
       DB_HOST: ${DB_HOST}

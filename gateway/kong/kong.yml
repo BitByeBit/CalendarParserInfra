@@ -45,3 +45,11 @@ services:
     paths:
     - /grafana
     strip_path: true
+
+- name: loki
+  url: http://loki:3100
+  routes:
+  - name: loki
+    paths:
+    - /loki
+    strip_path: true

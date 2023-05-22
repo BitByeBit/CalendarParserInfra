@@ -36,10 +36,14 @@ services:
       - monitoring
 
   loki:
-    image: grafana/loki
+    image: grafana/loki:${LOKI_VERSION:-latest}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     volumes:
-        - ../configs/loki/loki.yml:/etc/config/loki.yml
-        - ../configs/loki/wal:/wal
+        - ./loki/loki.yml:/etc/config/loki.yml
+        - .//loki/wal:/wal
     entrypoint:
         - /usr/bin/loki
         - -config.file=/etc/config/loki.yml
@@ -49,11 +53,16 @@ services:
         - database
         - app
         - gateway_bridge
+        - monitoring
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
     container_name: grafana
     restart: unless-stopped
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     depends_on:
       - loki
     ports:
@@ -62,6 +71,7 @@ services:
       - database
       - app
       - gateway_bridge
+      - monitoring
     volumes:
       - grafana-volume:/var/lib/grafana
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
