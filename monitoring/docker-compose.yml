@@ -32,9 +32,52 @@ services:
     networks:
       - monitoring
 
+  loki:
+    image: grafana/loki:${LOKI_VERSION:-latest}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    configs:
+      - source: loki-config
+        target: /etc/config/loki.yml
+    volumes:
+        - loki-volume:/wal
+    entrypoint:
+        - /usr/bin/loki
+        - -config.file=/etc/config/loki.yml
+    networks:
+        - app
+        - gateway_bridge
+        - monitoring
+
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    depends_on:
+      - loki
+    networks:
+      - gateway_bridge
+      - monitoring
+    volumes:
+      - grafana-volume:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
+      - ./grafana:/etc/grafana/provisioning
+
 configs:
   prometheus-config:
-    file: ./prometheus/prometheus.yml   
+    file: ./prometheus/prometheus.yml
+  loki-config:
+    file: ./loki/loki.yml  
+
+volumes:
+  grafana-volume:
+  loki-volume:
 
 networks:
   app:

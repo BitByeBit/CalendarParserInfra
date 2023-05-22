@@ -88,6 +88,7 @@ start() {
     docker-compose -f app/docker-compose.yml up -d || error "Failed to start app"
 
     info "Starting monitoring..."
+    docker plugin install  grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
     docker-compose -f monitoring/docker-compose.yml up -d || error "Failed to start monitoring"
 
     info "Starting gateway..."
@@ -117,6 +118,7 @@ deploy() {
     docker stack deploy -c app/docker-compose.yml $SERVICE_NAME || error "Failed to deploy app"
 
     info "Deploying monitoring..."
+    docker plugin install  grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
     docker stack deploy -c monitoring/docker-compose.yml $SERVICE_NAME || error "Failed to deploy monitoring"
 
     info "Deploying gateway..."

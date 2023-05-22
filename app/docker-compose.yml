@@ -7,6 +7,11 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
+        loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
     environment:
       DB_HOST: ${DB_HOST}
@@ -29,6 +34,11 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
+        loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-parser.jar"]
     networks:
       - app
@@ -39,6 +49,11 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
+        loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
     secrets:
       - source: firebase-credential
