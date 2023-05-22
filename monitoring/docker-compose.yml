@@ -1,21 +1,23 @@
-version: '3'
+version: '3.8'
 
 services:
   prometheus:
-    container_name: prometheus
-    image: prom/prometheus
-    restart: unless-stopped
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - 9090:9090
+    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--web.console.libraries=/usr/share/prometheus/console_libraries", "--web.console.templates=/usr/share/prometheus/consoles", "--web.external-url=/prometheus/", "--web.route-prefix=/"]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    configs:
+      - source: prometheus-config
+        target: /etc/prometheus/prometheus.yml
     networks:
-      - infra
+      - app
+      - monitoring
+      - gateway_bridge
 
   node_exporter:
-    container_name: node_exporter
-    image: prom/node-exporter
-    restart: unless-stopped
+    image: prom/node-exporter:${NODE_EXPORTER_VERSION:-latest}
     deploy:
       mode: global
     volumes:
@@ -27,11 +29,63 @@ services:
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    ports:
-      - 9100:9100
     networks:
-      - infra     
+      - monitoring
+
+  loki:
+    image: grafana/loki:${LOKI_VERSION:-latest}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    configs:
+      - source: loki-config
+        target: /etc/config/loki.yml
+    volumes:
+        - loki-volume:/wal
+    entrypoint:
+        - /usr/bin/loki
+        - -config.file=/etc/config/loki.yml
+    networks:
+        - app
+        - gateway_bridge
+        - monitoring
+
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    depends_on:
+      - loki
+    networks:
+      - gateway_bridge
+      - monitoring
+    volumes:
+      - grafana-volume:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
+      - ./grafana:/etc/grafana/provisioning
+
+configs:
+  prometheus-config:
+    file: ./prometheus/prometheus.yml
+  loki-config:
+    file: ./loki/loki.yml  
+
+volumes:
+  grafana-volume:
+  loki-volume:
 
 networks:
-  infra:
+  app:
+    driver: overlay
+    external: true
+  monitoring:
+    driver: overlay
+    external: true
+  gateway_bridge:
+    driver: overlay
     external: true

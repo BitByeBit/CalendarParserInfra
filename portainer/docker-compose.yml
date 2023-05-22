@@ -1,19 +1,46 @@
-version: '3'
+version: '3.8'
 
 services:
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: always
-    ports:
-      - 8000:8000
-      - 9443:9443
+  agent:
+    image: portainer/agent:${PORTAINER_AGENT_VERSION:-latest}
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+      restart_policy:
+        condition: on-failure
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer-data:/data
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
-      - infra
+      - portainer
+
+  portainer:
+    image: portainer/portainer-ce:${PORTAINER_CE_VERSION:-latest}
+    command: -H tcp://agent:9001 --tlsskipverify
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+    labels:
+      - com.docker.compose.service.portainer.path=/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - portainer
+      - gateway_bridge
+
+volumes:
+  portainer-data:
 
 networks:
-  infra:
+  portainer:
+    driver: overlay
     external: true
+  gateway_bridge:
+    driver: overlay
+    external: true 

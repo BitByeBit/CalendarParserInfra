@@ -1,0 +1,31 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: calendardb
+    orgId: 1
+
+datasources:
+  - name: calendardb
+    # datasource type.
+    type: postgres
+    # access mode. proxy or direct (Server or Browser in the UI).
+    access: proxy
+    # url
+    url: http://localhost:5432
+    # Deprecated, use secureJsonData.password
+    password:
+    # database user, if used
+    user:
+    # database name, if used
+    database: postgres
+    # enable/disable basic auth
+    basicAuth:
+    # basic auth username
+    basicAuthUser:
+    # Deprecated, use secureJsonData.basicAuthPassword
+    basicAuthPassword:
+    # enable/disable with credentials headers
+    withCredentials:
+    # mark as default datasource. Max one per org
+    version: 1
+    # allow users to edit datasources from the UI.

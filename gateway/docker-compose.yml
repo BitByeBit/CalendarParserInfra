@@ -1,27 +1,34 @@
-version: '3'
+version: '3.8'
 
 services:
   gateway:
-    container_name: gateway
-    image: kong
-    restart: unless-stopped
+    image: kong:${KONG_VERSION:-latest}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     ports:
-      - 80:80
-    volumes:
-      - ./kong.yml:/opt/kong.yml
+      - 80:8000
+      - 443:8443
+    configs:
+      - source: kong-config
+        target: /kong/declarative/kong.yml
     environment:
       KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_PROXY_HTTP_PORT_NUMBER: 80
-      KOND_DECLARATIVE_CONFIG: /opt/kong.yml
-      KONG_PROXY_LISTEN: "0.0.0.0:80"
-      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
     networks:
-      - infra
+      - gateway_bridge
+
+configs:
+  kong-config:
+    file: ./kong/kong.yml
 
 networks:
-  infra:
-    external: true
+  gateway_bridge:
+    driver: overlay
+    external: true 
