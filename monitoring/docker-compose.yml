@@ -1,14 +1,17 @@
-version: '3'
+version: '3.8'
 
 services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: unless-stopped
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - 9090:9090
+    configs:
+      - source: prometheus-config
+        target: /etc/prometheus/prometheus.yml
     networks:
       - app
       - monitoring
@@ -29,10 +32,12 @@ services:
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    ports:
-      - 9100:9100
     networks:
-      - monitoring    
+      - monitoring
+
+configs:
+  prometheus-config:
+    file: ./prometheus/prometheus.yml   
 
   loki:
     image: grafana/loki
@@ -71,18 +76,15 @@ volumes:
 
 networks:
   app:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
     external: true
   monitoring:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
     external: true
   database:
     # driver: overlay
     # attachable: true
     external: true
   gateway_bridge:
-    # driver: overlay
-    # attachable: true
+    driver: overlay
     external: true
