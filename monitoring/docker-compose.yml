@@ -59,6 +59,8 @@ services:
         condition: on-failure
       placement:
         constraints: [node.role == manager]
+    environment:
+      - GF_SERVER_ROOT_URL=http://localhost/grafana
     depends_on:
       - loki
     networks:
@@ -77,7 +79,6 @@ configs:
 
 volumes:
   grafana-volume:
-  loki-volume:
 
 networks:
   app:
