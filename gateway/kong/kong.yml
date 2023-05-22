@@ -37,3 +37,9 @@ services:
     paths:
     - /pgadmin
     strip_path: true
+    plugins:
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "X-Script-Name: /pgadmin"
