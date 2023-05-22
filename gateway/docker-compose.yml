@@ -2,13 +2,11 @@ version: '3.8'
 
 services:
   gateway:
-    container_name: gateway
     image: kong:${KONG_VERSION:-latest}
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-    restart: unless-stopped
     ports:
       - 80:8000
       - 443:8443

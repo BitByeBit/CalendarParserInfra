@@ -2,18 +2,16 @@ version: '3.8'
 
 services:
   core:
-    container_name: core
     image: ghcr.io/bitbyebit/calendar-parser-core-be:${CORE_BE_VERSION:-latest}
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-    restart: unless-stopped
     logging:
-            driver: loki
-            options:
-                loki-url: http://host.docker.internal:3100/loki/api/v1/push
-                loki-external-labels: job=myjob,owner=BYTE,environment=development
+      driver: loki
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
+        loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-core-be.jar"]
     environment:
       DB_HOST: ${DB_HOST}
@@ -31,25 +29,31 @@ services:
       - authenticator
     
   parser:
-    container_name: parser
     image: ghcr.io/bitbyebit/calendar-parser-parser:${PARSER_VERSION:-latest}
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-    restart: unless-stopped
+    logging:
+      driver: loki
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
+        loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-parser.jar"]
     networks:
       - app
 
   authenticator:
-    container_name: authenticator
     image: ghcr.io/bitbyebit/calendar-parser-authenticator:${AUTHENTICATOR_VERSION:-latest}
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-    restart: unless-stopped
+    logging:
+      driver: loki
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
+        loki-external-labels: job=myjob,owner=BYTE,environment=development
     command: ["java", "-jar", "/srv/calendar-parser-authenticator.jar"]
     secrets:
       - source: firebase-credential
