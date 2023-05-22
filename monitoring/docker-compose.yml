@@ -35,10 +35,6 @@ services:
     networks:
       - monitoring
 
-configs:
-  prometheus-config:
-    file: ./prometheus/prometheus.yml   
-
   loki:
     image: grafana/loki
     volumes:
@@ -70,6 +66,10 @@ configs:
       - grafana-volume:/var/lib/grafana
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
       - ./grafana:/etc/grafana/provisioning
+
+configs:
+  prometheus-config:
+    file: ./prometheus/prometheus.yml   
 
 volumes:
   grafana-volume:
