@@ -32,3 +32,14 @@ scrape_configs:
   - job_name: 'calendar'
     static_configs:
       - targets: ['core:8081']
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    params:
+      collect[]:
+        - total_requests
+        - calendar_requests
+        - add_event_requests
+        - edit_event_requests
+        - delete_event_requests
+        - filter_calendar_requests
+        - share_event_requests 
