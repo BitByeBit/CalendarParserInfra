@@ -79,6 +79,7 @@ configs:
 
 volumes:
   grafana-volume:
+  loki-volume:
 
 networks:
   app:
